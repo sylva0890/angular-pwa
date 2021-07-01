@@ -1,0 +1,6 @@
+{
+	"appId": "com.example.mine",
+	"appName": "angular-pwa",
+	"webDir": "dist/angular-starter/browser",
+	"bundledWebRuntime": false
+}

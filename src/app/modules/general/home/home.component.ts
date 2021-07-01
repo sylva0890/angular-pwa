@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
+import { Camera } from '@capacitor/camera';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +21,8 @@ export class HomeComponent implements OnInit {
   features: any;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object) {
+    this.initPermission();
+
     this.features =
       [
         {
@@ -26,7 +31,7 @@ export class HomeComponent implements OnInit {
           icon: 'fab fa-bootstrap',
           link: 'httpclient'
         },
-         {
+        {
           name: 'Bootstrap',
           description: 'Bootstrap Prototype Description',
           icon: 'fab fa-bootstrap',
@@ -62,6 +67,29 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadScript('assets/params/js/index.js');
+  }
+
+  printCurrentPosition = async () => {
+    const coordinates = await Geolocation.getCurrentPosition();
+    console.log('Current position:', coordinates);
+    console.log(JSON.stringify(coordinates));
+  };
+
+  async initPermission() {
+    console.log('initPermission');
+    console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    const cam = await Camera.checkPermissions();
+    let coordinates = await Geolocation.checkPermissions();
+    console.log('initPermission coordinates');
+    console.log(JSON.stringify(coordinates));
+    console.log(coordinates.location === 'granted');
+    console.log('initPermission cam');
+    console.log(JSON.stringify(cam));
+    if (coordinates.location === 'granted') {
+      this.printCurrentPosition();
+    } else {
+      coordinates = await Geolocation.requestPermissions();
+    }
   }
 
   loadScript(name: string): void {
